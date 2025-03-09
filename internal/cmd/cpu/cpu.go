@@ -213,7 +213,7 @@ func updateCPUStats(cpuStats map[string]CPUStatTracker, perCPUStats map[string]C
 
 func printStats(cpuStats map[string]CPUStatTracker) {
 	if len(cpuStats) == 0 {
-		pkg.WriteStringToFile(("No stats collected"), CPU)
+		pkg.WriteStringToFile("No stats collected", CPU)
 		return
 	}
 
