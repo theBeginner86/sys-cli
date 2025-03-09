@@ -79,5 +79,5 @@ func cpuInfo() error {
 
 func init() {
 	CPUInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
-	CPUInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Referesh interval (e.g, 500ms, 3s etc)")
+	CPUInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
 }

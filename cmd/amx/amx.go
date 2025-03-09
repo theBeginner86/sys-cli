@@ -51,7 +51,7 @@ func watchAMX(ctx context.Context) error {
 			return nil
 		case <-ticker.C:
 			fmt.Print("\033[H\033[2J")
-			fmt.Printf("Sys CLI: watch %.fs; time: %v\n", interval.Seconds(), time.Now())
+			fmt.Printf("Sys CLI: watch %.1fs\n", interval.Seconds())
 			err := amxInfo()
 			if err != nil {
 				return err
@@ -80,6 +80,6 @@ func amxInfo() error {
 
 func init() {
 	AMXInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
-	AMXInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Referesh interval (e.g, 500ms, 3s etc)")
+	AMXInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 3*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
 }
 

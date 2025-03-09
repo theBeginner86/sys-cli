@@ -80,5 +80,5 @@ func memInfo() error {
 
 func init() {
 	MemInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")	
-	MemInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Referesh interval (e.g, 500ms, 3s etc)")
+	MemInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
 }
