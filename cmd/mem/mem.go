@@ -1,29 +1,45 @@
 package mem
 
 import (
-	"fmt"
 	"os/exec"
+	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"sys-cli/pkg"
+)
+
+var (
+	MEM = "mem"
 )
 
 var MemInfoCmd = &cobra.Command{
-  Use:   "mem",
+  Use:   MEM,
   Short: "Prints memory utlization",
   Long:  `Prints memory utlization`,
-  Run: func(cmd *cobra.Command, args []string) {
-    memInfo()
+  RunE: func(cmd *cobra.Command, args []string) error {
+    err := memInfo()
+		if err != nil {
+			return err
+		}
+		return nil
   },
 }
 
 
-func memInfo() {
+func memInfo() error {
 	cmd := exec.Command("/bin/bash", "-c", "free -h")
 	out, err := cmd.Output()
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Println(string(out))
+
+	err = pkg.WriteOutput(out, MEM)
+	if err != nil {
+		return err
+	}
+	return nil
 }

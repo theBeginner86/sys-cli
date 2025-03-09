@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"path"
 	"path/filepath"
 )
 
@@ -28,4 +29,22 @@ func CreateOutputDirIfNotExists() {
 			fmt.Println(err)
 		}
 	}
+}
+
+func WriteOutput(data []byte, op string) error {
+	filename := op + ".log"
+	fpath := path.Join(OutputDir, filename)
+	
+	f, err := os.Create(fpath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
