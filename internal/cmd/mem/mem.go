@@ -6,10 +6,10 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
-	"strings"
-	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -18,8 +18,8 @@ import (
 
 // MemStats holds memory utilization data
 type MemStats struct {
-    Total, Used, Free, Shared, BuffCache, Available float64 // In GiB
-    SwapTotal, SwapUsed, SwapFree                   float64 // In GiB
+	Total, Used, Free, Shared, BuffCache, Available float64 // In GiB
+	SwapTotal, SwapUsed, SwapFree                   float64 // In GiB
 }
 
 var (
@@ -70,12 +70,12 @@ func watchMem(ctx context.Context) error {
 			if err != nil {
 				return err
 			}
-			 // Parse and store stats
-            stats, err := parseMemOutput(out)
-            if err != nil {
-                return err
-            }
-            statsList = append(statsList, stats)
+			// Parse and store stats
+			stats, err := parseMemOutput(out)
+			if err != nil {
+				return err
+			}
+			statsList = append(statsList, stats)
 		}
 	}
 }
@@ -92,165 +92,164 @@ func memInfo() ([]byte, error) {
 	return out, nil
 }
 
-
 func parseMemOutput(out []byte) (MemStats, error) {
-    lines := strings.Split(string(out), "\n")
-    if len(lines) < 3 { // Need header, Mem, and Swap lines
-        return MemStats{}, fmt.Errorf("invalid memory output: too few lines")
-    }
+	lines := strings.Split(string(out), "\n")
+	if len(lines) < 3 { // Need header, Mem, and Swap lines
+		return MemStats{}, fmt.Errorf("invalid memory output: too few lines")
+	}
 
-    // Parse Mem line (second line)
-    memFields := strings.Fields(lines[1])
-    if len(memFields) < 7 || memFields[0] != "Mem:" {
-        return MemStats{}, fmt.Errorf("invalid Mem line format")
-    }
+	// Parse Mem line (second line)
+	memFields := strings.Fields(lines[1])
+	if len(memFields) < 7 || memFields[0] != "Mem:" {
+		return MemStats{}, fmt.Errorf("invalid Mem line format")
+	}
 
-    // Parse Swap line (third line)
-    swapFields := strings.Fields(lines[2])
-    if len(swapFields) < 4 || swapFields[0] != "Swap:" {
-        return MemStats{}, fmt.Errorf("invalid Swap line format")
-    }
+	// Parse Swap line (third line)
+	swapFields := strings.Fields(lines[2])
+	if len(swapFields) < 4 || swapFields[0] != "Swap:" {
+		return MemStats{}, fmt.Errorf("invalid Swap line format")
+	}
 
-    stats := MemStats{}
-    var err error
-    stats.Total, err = parseSize(memFields[1])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse total: %v", err)
-    }
-    stats.Used, err = parseSize(memFields[2])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse used: %v", err)
-    }
-    stats.Free, err = parseSize(memFields[3])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse free: %v", err)
-    }
-    stats.Shared, err = parseSize(memFields[4])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse shared: %v", err)
-    }
-    stats.BuffCache, err = parseSize(memFields[5])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse buff/cache: %v", err)
-    }
-    stats.Available, err = parseSize(memFields[6])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse available: %v", err)
-    }
+	stats := MemStats{}
+	var err error
+	stats.Total, err = parseSize(memFields[1])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse total: %v", err)
+	}
+	stats.Used, err = parseSize(memFields[2])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse used: %v", err)
+	}
+	stats.Free, err = parseSize(memFields[3])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse free: %v", err)
+	}
+	stats.Shared, err = parseSize(memFields[4])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse shared: %v", err)
+	}
+	stats.BuffCache, err = parseSize(memFields[5])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse buff/cache: %v", err)
+	}
+	stats.Available, err = parseSize(memFields[6])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse available: %v", err)
+	}
 
-    stats.SwapTotal, err = parseSize(swapFields[1])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse swap total: %v", err)
-    }
-    stats.SwapUsed, err = parseSize(swapFields[2])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse swap used: %v", err)
-    }
-    stats.SwapFree, err = parseSize(swapFields[3])
-    if err != nil {
-        return MemStats{}, fmt.Errorf("failed to parse swap free: %v", err)
-    }
+	stats.SwapTotal, err = parseSize(swapFields[1])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse swap total: %v", err)
+	}
+	stats.SwapUsed, err = parseSize(swapFields[2])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse swap used: %v", err)
+	}
+	stats.SwapFree, err = parseSize(swapFields[3])
+	if err != nil {
+		return MemStats{}, fmt.Errorf("failed to parse swap free: %v", err)
+	}
 
-    return stats, nil
+	return stats, nil
 }
 
 // parseSize converts human-readable sizes (e.g., "7.6Gi", "903Mi", "0B") to GiB
 func parseSize(sizeStr string) (float64, error) {
-    if sizeStr == "" {
-        return 0, fmt.Errorf("empty size string")
-    }
+	if sizeStr == "" {
+		return 0, fmt.Errorf("empty size string")
+	}
 
-    // Extract number and unit
-    numStr := ""
-    unit := ""
-    for _, r := range sizeStr {
-        if r >= '0' && r <= '9' || r == '.' {
-            numStr += string(r)
-        } else {
-            unit += string(r)
-        }
-    }
+	// Extract number and unit
+	numStr := ""
+	unit := ""
+	for _, r := range sizeStr {
+		if r >= '0' && r <= '9' || r == '.' {
+			numStr += string(r)
+		} else {
+			unit += string(r)
+		}
+	}
 
-    num, err := strconv.ParseFloat(numStr, 64)
-    if err != nil {
-        return 0, fmt.Errorf("invalid number in size: %v", err)
-    }
+	num, err := strconv.ParseFloat(numStr, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid number in size: %v", err)
+	}
 
-    // Convert to GiB based on unit
-    switch strings.ToLower(unit) {
-    case "gi", "gib":
-        return num, nil
-    case "mi", "mib":
-        return num / 1024, nil // MiB to GiB
-    case "ki", "kib":
-        return num / (1024 * 1024), nil // KiB to GiB
-    case "b":
-        return num / (1024 * 1024 * 1024), nil // Bytes to GiB
-    case "":
-        return num, nil // Assume GiB if no unit (unlikely)
-    default:
-        return 0, fmt.Errorf("unknown unit: %s", unit)
-    }
+	// Convert to GiB based on unit
+	switch strings.ToLower(unit) {
+	case "gi", "gib":
+		return num, nil
+	case "mi", "mib":
+		return num / 1024, nil // MiB to GiB
+	case "ki", "kib":
+		return num / (1024 * 1024), nil // KiB to GiB
+	case "b":
+		return num / (1024 * 1024 * 1024), nil // Bytes to GiB
+	case "":
+		return num, nil // Assume GiB if no unit (unlikely)
+	default:
+		return 0, fmt.Errorf("unknown unit: %s", unit)
+	}
 }
 
 func printStats(statsList []MemStats) {
-    if len(statsList) == 0 {
-        pkg.WriteStringToFile("No stats collected", MEM)
-        return
-    }
+	if len(statsList) == 0 {
+		pkg.WriteStringToFile("No stats collected", MEM)
+		return
+	}
 
-    // Calculate averages and maximums
-    var avg, max MemStats
-    for _, stats := range statsList {
-        avg.Total += stats.Total
-        avg.Used += stats.Used
-        avg.Free += stats.Free
-        avg.Shared += stats.Shared
-        avg.BuffCache += stats.BuffCache
-        avg.Available += stats.Available
-        avg.SwapTotal += stats.SwapTotal
-        avg.SwapUsed += stats.SwapUsed
-        avg.SwapFree += stats.SwapFree
+	// Calculate averages and maximums
+	var avg, max MemStats
+	for _, stats := range statsList {
+		avg.Total += stats.Total
+		avg.Used += stats.Used
+		avg.Free += stats.Free
+		avg.Shared += stats.Shared
+		avg.BuffCache += stats.BuffCache
+		avg.Available += stats.Available
+		avg.SwapTotal += stats.SwapTotal
+		avg.SwapUsed += stats.SwapUsed
+		avg.SwapFree += stats.SwapFree
 
-        max.Total = maxFloat(max.Total, stats.Total)
-        max.Used = maxFloat(max.Used, stats.Used)
-        max.Free = maxFloat(max.Free, stats.Free)
-        max.Shared = maxFloat(max.Shared, stats.Shared)
-        max.BuffCache = maxFloat(max.BuffCache, stats.BuffCache)
-        max.Available = maxFloat(max.Available, stats.Available)
-        max.SwapTotal = maxFloat(max.SwapTotal, stats.SwapTotal)
-        max.SwapUsed = maxFloat(max.SwapUsed, stats.SwapUsed)
-        max.SwapFree = maxFloat(max.SwapFree, stats.SwapFree)
-    }
+		max.Total = maxFloat(max.Total, stats.Total)
+		max.Used = maxFloat(max.Used, stats.Used)
+		max.Free = maxFloat(max.Free, stats.Free)
+		max.Shared = maxFloat(max.Shared, stats.Shared)
+		max.BuffCache = maxFloat(max.BuffCache, stats.BuffCache)
+		max.Available = maxFloat(max.Available, stats.Available)
+		max.SwapTotal = maxFloat(max.SwapTotal, stats.SwapTotal)
+		max.SwapUsed = maxFloat(max.SwapUsed, stats.SwapUsed)
+		max.SwapFree = maxFloat(max.SwapFree, stats.SwapFree)
+	}
 
-    n := float64(len(statsList))
-    avg.Total /= n
-    avg.Used /= n
-    avg.Free /= n
-    avg.Shared /= n
-    avg.BuffCache /= n
-    avg.Available /= n
-    avg.SwapTotal /= n
-    avg.SwapUsed /= n
-    avg.SwapFree /= n
+	n := float64(len(statsList))
+	avg.Total /= n
+	avg.Used /= n
+	avg.Free /= n
+	avg.Shared /= n
+	avg.BuffCache /= n
+	avg.Available /= n
+	avg.SwapTotal /= n
+	avg.SwapUsed /= n
+	avg.SwapFree /= n
 
-    // Print results
-    pkg.WriteStringToFile(fmt.Sprintln("\nMemory Utilization Statistics (in GiB):"), MEM)
-    pkg.WriteStringToFile(fmt.Sprintf("  Avg: total: %.2f, used: %.2f, free: %.2f, shared: %.2f, buff/cache: %.2f, available: %.2f\n",
-        avg.Total, avg.Used, avg.Free, avg.Shared, avg.BuffCache, avg.Available), MEM)
-    pkg.WriteStringToFile(fmt.Sprintf("       swap total: %.2f, swap used: %.2f, swap free: %.2f\n",
-        avg.SwapTotal, avg.SwapUsed, avg.SwapFree), MEM)
-    pkg.WriteStringToFile(fmt.Sprintf("  Max: total: %.2f, used: %.2f, free: %.2f, shared: %.2f, buff/cache: %.2f, available: %.2f\n",
-        max.Total, max.Used, max.Free, max.Shared, max.BuffCache, max.Available), MEM)
-    pkg.WriteStringToFile(fmt.Sprintf("       swap total: %.2f, swap used: %.2f, swap free: %.2f\n",
-        max.SwapTotal, max.SwapUsed, max.SwapFree), MEM)
+	// Print results
+	pkg.WriteStringToFile(fmt.Sprintln("\nMemory Utilization Statistics (in GiB):"), MEM)
+	pkg.WriteStringToFile(fmt.Sprintf("  Avg: total: %.2f, used: %.2f, free: %.2f, shared: %.2f, buff/cache: %.2f, available: %.2f\n",
+		avg.Total, avg.Used, avg.Free, avg.Shared, avg.BuffCache, avg.Available), MEM)
+	pkg.WriteStringToFile(fmt.Sprintf("       swap total: %.2f, swap used: %.2f, swap free: %.2f\n",
+		avg.SwapTotal, avg.SwapUsed, avg.SwapFree), MEM)
+	pkg.WriteStringToFile(fmt.Sprintf("  Max: total: %.2f, used: %.2f, free: %.2f, shared: %.2f, buff/cache: %.2f, available: %.2f\n",
+		max.Total, max.Used, max.Free, max.Shared, max.BuffCache, max.Available), MEM)
+	pkg.WriteStringToFile(fmt.Sprintf("       swap total: %.2f, swap used: %.2f, swap free: %.2f\n",
+		max.SwapTotal, max.SwapUsed, max.SwapFree), MEM)
 }
 
 func maxFloat(a, b float64) float64 {
-    if a > b {
-        return a
-    }
-    return b
+	if a > b {
+		return a
+	}
+	return b
 }
 
 func init() {

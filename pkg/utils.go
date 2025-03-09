@@ -35,11 +35,11 @@ func CreateOutputFile(op string) error {
 	filename := op + ".log"
 	fpath := path.Join(OutputDir, filename)
 
-		_, err := os.Create(fpath)
-		if err != nil {
-			return err
-		}	
-		return nil
+	_, err := os.Create(fpath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // TODO: use mutex for thread safe
@@ -47,11 +47,11 @@ func WriteBytesToFile(data []byte, op string) error {
 	filename := op + ".log"
 	fpath := path.Join(OutputDir, filename)
 
-		f, err := os.OpenFile(fpath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
+	f, err := os.OpenFile(fpath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
 
 	_, err = f.Write(data)
 	if err != nil {
@@ -66,11 +66,11 @@ func WriteStringToFile(data string, op string) error {
 	filename := op + ".log"
 	fpath := path.Join(OutputDir, filename)
 
-		f, err := os.OpenFile(fpath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
+	f, err := os.OpenFile(fpath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
 
 	_, err = f.WriteString(data)
 	if err != nil {
