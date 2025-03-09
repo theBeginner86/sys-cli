@@ -37,6 +37,9 @@ var (
 		Use:   AMX,
 		Short: "Prints amx utlization",
 		Long:  `Prints amx utlization`,
+		PreRun: func(cmd *cobra.Command, args []string) {
+			pkg.CreateOutputFile(AMX)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if watch {
 				return watchAMX(cmd.Context())
@@ -224,4 +227,5 @@ func maxFloat(a, b float64) float64 {
 func init() {
 	AMXInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
 	AMXInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 3*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
+
 }

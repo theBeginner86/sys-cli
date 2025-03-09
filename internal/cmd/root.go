@@ -47,7 +47,4 @@ func init() {
 func initConfig() {
 	pkg.SetOutputDirectory()
 	pkg.CreateOutputDirIfNotExists()
-	pkg.CreateOutputFile(cpu.CPU)
-	pkg.CreateOutputFile(mem.MEM)
-	pkg.CreateOutputFile(amx.AMX)
 }

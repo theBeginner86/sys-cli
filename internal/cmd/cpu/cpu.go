@@ -35,6 +35,9 @@ var (
 		Use:   CPU,
 		Short: "Prints cpu utlization",
 		Long:  `Prints cpu utlization`,
+		PreRun: func(cmd *cobra.Command, args []string) {
+			pkg.CreateOutputFile(CPU)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if watch {
 				return watchCPU(cmd.Context())
@@ -251,5 +254,5 @@ func maxFloat(a, b float64) float64 {
 func init() {
 	CPUInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
 	CPUInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
-	CPUInfoCmd.Flags().StringVarP(&cpuList, "cpu", "c", "", "CPU list to track (e.g, '1', '1,2,3', '3-9', 'ALL')")
+	CPUInfoCmd.Flags().StringVarP(&cpuList, "cpu", "c", "", "CPU list to track (e.g, '1', '1,2,3', '3-9', 'ALL')")	
 }

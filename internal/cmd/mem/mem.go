@@ -30,6 +30,9 @@ var (
 		Use:   MEM,
 		Short: "Prints memory utlization",
 		Long:  `Prints memory utlization`,
+		PreRun: func(cmd *cobra.Command, args []string) {
+			pkg.CreateOutputFile(MEM)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if watch {
 				return watchMem(cmd.Context())
