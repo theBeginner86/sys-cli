@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	AMX = "amx"
-	watch bool
-	interval time.Duration
-	count int
+	AMX        = "amx"
+	watch      bool
+	interval   time.Duration
+	count      int
 	AMXInfoCmd = &cobra.Command{
 		Use:   AMX,
 		Short: "Prints amx utlization",
@@ -70,16 +70,14 @@ func amxInfo() error {
 
 	fmt.Println(string(out))
 
-	err = pkg.WriteOutput(out, AMX)
+	err = pkg.WriteBytesToFile(out, AMX)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-
 func init() {
 	AMXInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
 	AMXInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 3*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
 }
-

@@ -37,7 +37,6 @@ func init() {
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sys-cli/config.yaml)")
 
-
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.AddCommand(VersionCmd)
 	rootCmd.AddCommand(mem.MemInfoCmd)
@@ -48,4 +47,7 @@ func init() {
 func initConfig() {
 	pkg.SetOutputDirectory()
 	pkg.CreateOutputDirIfNotExists()
+	pkg.CreateOutputFile(cpu.CPU)
+	pkg.CreateOutputFile(mem.MEM)
+	pkg.CreateOutputFile(amx.AMX)
 }

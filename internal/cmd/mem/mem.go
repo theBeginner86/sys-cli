@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	MEM = "mem"
-	watch bool
-	interval time.Duration
- 	MemInfoCmd = &cobra.Command{
+	MEM        = "mem"
+	watch      bool
+	interval   time.Duration
+	MemInfoCmd = &cobra.Command{
 		Use:   MEM,
 		Short: "Prints memory utlization",
 		Long:  `Prints memory utlization`,
@@ -44,7 +44,7 @@ func watchMem(ctx context.Context) error {
 
 	for {
 		select {
-		case <- ctx.Done():
+		case <-ctx.Done():
 			return ctx.Err()
 		case <-sigChan:
 			// fmt.Println("\nWatch stopped by signal")
@@ -57,9 +57,8 @@ func watchMem(ctx context.Context) error {
 				return err
 			}
 		}
-	}	
+	}
 }
-
 
 func memInfo() error {
 	cmd := exec.Command("/bin/bash", "-c", "free -h")
@@ -71,7 +70,7 @@ func memInfo() error {
 
 	fmt.Println(string(out))
 
-	err = pkg.WriteOutput(out, MEM)
+	err = pkg.WriteBytesToFile(out, MEM)
 	if err != nil {
 		return err
 	}
@@ -79,6 +78,6 @@ func memInfo() error {
 }
 
 func init() {
-	MemInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")	
+	MemInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
 	MemInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
 }
