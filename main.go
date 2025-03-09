@@ -1,6 +1,6 @@
 package main
 
-import "sys-cli/cmd"
+import "sys-cli/internal/cmd"
 
 func main() {
 	cmd.Execute()
