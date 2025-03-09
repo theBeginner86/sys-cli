@@ -17,6 +17,7 @@ import (
 var (
 	CPU = "cpu"
 	watch bool
+	cpuList string
 	interval time.Duration
 	CPUInfoCmd = &cobra.Command{
 		Use:   CPU,
@@ -61,7 +62,11 @@ func watchCPU(ctx context.Context) error {
 
 
 func cpuInfo() error {
-	cmd := exec.Command("/bin/bash", "-c", "mpstat -P ALL")
+	mpstat := "mpstat"
+	if cpuList != "" {
+		mpstat += fmt.Sprintf(" -P %s", cpuList)
+	}
+	cmd := exec.Command("/bin/bash", "-c", mpstat)
 	out, err := cmd.Output()
 
 	if err != nil {
@@ -80,4 +85,5 @@ func cpuInfo() error {
 func init() {
 	CPUInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")
 	CPUInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Refresh interval (e.g, 500ms, 3s etc)")
+	CPUInfoCmd.Flags().StringVarP(&cpuList, "cpu", "c", "", "CPU list to track (e.g, '1', '1,2,3', '3-9', 'ALL')")
 }
