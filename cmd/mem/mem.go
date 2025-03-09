@@ -1,13 +1,15 @@
 package mem
 
 import (
-	"os/exec"
+	"context"
 	"fmt"
-	// "context"
+	"os"
+	"os/exec"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/spf13/cobra"
-	// "k8s.io/kubectl/pkg/util/interrupt"
-	// watchtools "k8s.io/client-go/tools/watch"
 
 	"sys-cli/pkg"
 )
@@ -15,13 +17,14 @@ import (
 var (
 	MEM = "mem"
 	watch bool
+	interval time.Duration
  	MemInfoCmd = &cobra.Command{
 		Use:   MEM,
 		Short: "Prints memory utlization",
 		Long:  `Prints memory utlization`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if watch {
-
+				return watchMem(cmd.Context())
 			}
 			err := memInfo()
 			if err != nil {
@@ -32,29 +35,30 @@ var (
 	}
 )
 
-// func watchMem() error {
-// 	ctx, cancel := context.WithCancel(context.Background())
-// 	defer cancel()
-// 	// intr := interrupt.New(nil, cancel)
-// 	// intr.Run(func() error {
-// 	// 	_, err := watchtools.UntilWithoutRetry(ctx, w, func(e watch.Event) (bool, error) {
-			
-// 	// 		return false, nil
-// 	// 	})
-// 	// 	return err
-// 	// })
-// 	var err error
-// 	go func(err error) {
-// 		for {
-// 			err = memInfo()
-// 			if err != nil {
+func watchMem(ctx context.Context) error {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
 
-// 			}
-// 		}
-// 	}(err)
-// 	<- sig
-// 	return nil
-// }
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	for {
+		select {
+		case <- ctx.Done():
+			return ctx.Err()
+		case <-sigChan:
+			// fmt.Println("\nWatch stopped by signal")
+			return nil
+		case <-ticker.C:
+			fmt.Print("\033[H\033[2J")
+			fmt.Printf("Sys CLI: watch %.1fs\n", interval.Seconds())
+			err := memInfo()
+			if err != nil {
+				return err
+			}
+		}
+	}	
+}
 
 
 func memInfo() error {
@@ -76,4 +80,5 @@ func memInfo() error {
 
 func init() {
 	MemInfoCmd.Flags().BoolVarP(&watch, "watch", "w", false, "After listing/getting the requested object, watch for changes")	
+	MemInfoCmd.Flags().DurationVarP(&interval, "interval", "i", 2*time.Second, "Referesh interval (e.g, 500ms, 3s etc)")
 }
