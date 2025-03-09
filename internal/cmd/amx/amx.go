@@ -180,12 +180,12 @@ func updateProcessStats(processStats map[string]ProcessStatTracker, perProcessSt
 		tracker.Count++
 
 		// Update maximums
-		tracker.MaxStats.AVX = maxFloat(tracker.MaxStats.AVX, stats.AVX)
-		tracker.MaxStats.AVX2 = maxFloat(tracker.MaxStats.AVX2, stats.AVX2)
-		tracker.MaxStats.AVX512 = maxFloat(tracker.MaxStats.AVX512, stats.AVX512)
-		tracker.MaxStats.AMXTile = maxFloat(tracker.MaxStats.AMXTile, stats.AMXTile)
-		tracker.MaxStats.PercentTotal = maxFloat(tracker.MaxStats.PercentTotal, stats.PercentTotal)
-		tracker.MaxStats.Total = maxFloat(tracker.MaxStats.Total, stats.Total)
+		tracker.MaxStats.AVX = pkg.MaxFloat(tracker.MaxStats.AVX, stats.AVX)
+		tracker.MaxStats.AVX2 = pkg.MaxFloat(tracker.MaxStats.AVX2, stats.AVX2)
+		tracker.MaxStats.AVX512 = pkg.MaxFloat(tracker.MaxStats.AVX512, stats.AVX512)
+		tracker.MaxStats.AMXTile = pkg.MaxFloat(tracker.MaxStats.AMXTile, stats.AMXTile)
+		tracker.MaxStats.PercentTotal = pkg.MaxFloat(tracker.MaxStats.PercentTotal, stats.PercentTotal)
+		tracker.MaxStats.Total = pkg.MaxFloat(tracker.MaxStats.Total, stats.Total)
 
 		processStats[key] = tracker
 	}
@@ -215,13 +215,6 @@ func printStats(processStats map[string]ProcessStatTracker) {
 			tracker.MaxStats.AVX, tracker.MaxStats.AVX2, tracker.MaxStats.AVX512, tracker.MaxStats.AMXTile,
 			tracker.MaxStats.PercentTotal, tracker.MaxStats.Total), AMX)
 	}
-}
-
-func maxFloat(a, b float64) float64 {
-	if a > b {
-		return a
-	}
-	return b
 }
 
 func init() {

@@ -6,6 +6,8 @@ import (
 	"os/user"
 	"path"
 	"path/filepath"
+	"strings"
+	"strconv"
 )
 
 var (
@@ -78,4 +80,50 @@ func WriteStringToFile(data string, op string) error {
 	}
 
 	return nil
+}
+
+func MaxFloat(a, b float64) float64 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+// parseSize converts human-readable sizes (e.g., "7.6Gi", "903Mi", "0B") to GiB
+func ParseSize(sizeStr string) (float64, error) {
+	if sizeStr == "" {
+		return 0, fmt.Errorf("empty size string")
+	}
+
+	// Extract number and unit
+	numStr := ""
+	unit := ""
+	for _, r := range sizeStr {
+		if r >= '0' && r <= '9' || r == '.' {
+			numStr += string(r)
+		} else {
+			unit += string(r)
+		}
+	}
+
+	num, err := strconv.ParseFloat(numStr, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid number in size: %v", err)
+	}
+
+	// Convert to GiB based on unit
+	switch strings.ToLower(unit) {
+	case "gi", "gib":
+		return num, nil
+	case "mi", "mib":
+		return num / 1024, nil // MiB to GiB
+	case "ki", "kib":
+		return num / (1024 * 1024), nil // KiB to GiB
+	case "b":
+		return num / (1024 * 1024 * 1024), nil // Bytes to GiB
+	case "":
+		return num, nil // Assume GiB if no unit (unlikely)
+	default:
+		return 0, fmt.Errorf("unknown unit: %s", unit)
+	}
 }

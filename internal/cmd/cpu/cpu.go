@@ -199,16 +199,16 @@ func updateCPUStats(cpuStats map[string]CPUStatTracker, perCPUStats map[string]C
 		tracker.Count++
 
 		// Update maximums
-		tracker.MaxStats.Usr = maxFloat(tracker.MaxStats.Usr, stats.Usr)
-		tracker.MaxStats.Nice = maxFloat(tracker.MaxStats.Nice, stats.Nice)
-		tracker.MaxStats.Sys = maxFloat(tracker.MaxStats.Sys, stats.Sys)
-		tracker.MaxStats.Iowait = maxFloat(tracker.MaxStats.Iowait, stats.Iowait)
-		tracker.MaxStats.Irq = maxFloat(tracker.MaxStats.Irq, stats.Irq)
-		tracker.MaxStats.Soft = maxFloat(tracker.MaxStats.Soft, stats.Soft)
-		tracker.MaxStats.Steal = maxFloat(tracker.MaxStats.Steal, stats.Steal)
-		tracker.MaxStats.Guest = maxFloat(tracker.MaxStats.Guest, stats.Guest)
-		tracker.MaxStats.Gnice = maxFloat(tracker.MaxStats.Gnice, stats.Gnice)
-		tracker.MaxStats.Idle = maxFloat(tracker.MaxStats.Idle, stats.Idle)
+		tracker.MaxStats.Usr = pkg.MaxFloat(tracker.MaxStats.Usr, stats.Usr)
+		tracker.MaxStats.Nice = pkg.MaxFloat(tracker.MaxStats.Nice, stats.Nice)
+		tracker.MaxStats.Sys = pkg.MaxFloat(tracker.MaxStats.Sys, stats.Sys)
+		tracker.MaxStats.Iowait = pkg.MaxFloat(tracker.MaxStats.Iowait, stats.Iowait)
+		tracker.MaxStats.Irq = pkg.MaxFloat(tracker.MaxStats.Irq, stats.Irq)
+		tracker.MaxStats.Soft = pkg.MaxFloat(tracker.MaxStats.Soft, stats.Soft)
+		tracker.MaxStats.Steal = pkg.MaxFloat(tracker.MaxStats.Steal, stats.Steal)
+		tracker.MaxStats.Guest = pkg.MaxFloat(tracker.MaxStats.Guest, stats.Guest)
+		tracker.MaxStats.Gnice = pkg.MaxFloat(tracker.MaxStats.Gnice, stats.Gnice)
+		tracker.MaxStats.Idle = pkg.MaxFloat(tracker.MaxStats.Idle, stats.Idle)
 
 		cpuStats[cpuID] = tracker
 	}
@@ -242,13 +242,6 @@ func printStats(cpuStats map[string]CPUStatTracker) {
 			tracker.MaxStats.Usr, tracker.MaxStats.Nice, tracker.MaxStats.Sys, tracker.MaxStats.Iowait, tracker.MaxStats.Irq,
 			tracker.MaxStats.Soft, tracker.MaxStats.Steal, tracker.MaxStats.Guest, tracker.MaxStats.Gnice, tracker.MaxStats.Idle), CPU)
 	}
-}
-
-func maxFloat(a, b float64) float64 {
-	if a > b {
-		return a
-	}
-	return b
 }
 
 func init() {
