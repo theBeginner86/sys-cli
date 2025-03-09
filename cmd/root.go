@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"os"
+	"sys-cli/cmd/amx"
 	"sys-cli/cmd/cpu"
 	"sys-cli/cmd/mem"
-	"sys-cli/cmd/amx"
+	"sys-cli/pkg"
 
 	"github.com/spf13/cobra"
 )
@@ -26,9 +27,7 @@ func Execute() {
 }
 
 func init() {
-	// define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	cobra.OnInitialize(initConfig)
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sys-cli.yaml)")
 
@@ -41,4 +40,7 @@ func init() {
 	rootCmd.AddCommand(amx.AMXInfoCmd)
 }
 
-
+func initConfig() {
+	pkg.SetOutputDirectory()
+	pkg.CreateOutputDirIfNotExists()
+}

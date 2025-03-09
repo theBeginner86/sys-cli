@@ -18,7 +18,8 @@ var AMXInfoCmd = &cobra.Command{
 
 
 func amxInfo() {
-	cmd := exec.Command("/bin/bash", "-c", "sudo ./cmd/amx/processwatch/processwatch -n 1")
+	// TODO: use cmd.SysProcAttr to add root user creds
+	cmd := exec.Command("/bin/bash", "-c", "sudo processwatch -n 1")
 	out, err := cmd.Output()
 
 	if err != nil {
