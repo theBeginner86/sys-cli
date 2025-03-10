@@ -5,7 +5,7 @@ deps:
 	sudo apt-get install libelf-dev cmake clang llvm llvm-dev python-is-python3 -y;
 	git clone --recursive https://github.com/intel/processwatch.git;
 	cd processwatch;
-	./build.sh; sudo cp ./processwatch /usr/local/bin;
+	/bin/bash build.sh; sudo cp ./processwatch /usr/local/bin;
 	cd ..;
 
 
