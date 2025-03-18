@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sys-cli/pkg"
+	"systat/pkg"
 )
 
 type CPUStats struct {

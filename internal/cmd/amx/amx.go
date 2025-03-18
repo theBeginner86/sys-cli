@@ -13,7 +13,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sys-cli/pkg"
+	"systat/pkg"
 )
 
 // ProcessStats holds utilization data for one process

@@ -1,4 +1,4 @@
-module sys-cli
+module systat
 
 go 1.23.0
 

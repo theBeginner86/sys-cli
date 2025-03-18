@@ -12,7 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sys-cli/pkg"
+	"systat/pkg"
 )
 
 // MemStats holds memory utilization data

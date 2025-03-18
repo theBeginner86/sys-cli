@@ -10,4 +10,4 @@ deps:
 
 
 build:
-	go build -o sys-cli .
+	go build -o systat .

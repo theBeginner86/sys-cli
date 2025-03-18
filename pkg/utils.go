@@ -6,8 +6,8 @@ import (
 	"os/user"
 	"path"
 	"path/filepath"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -17,9 +17,9 @@ var (
 func SetOutputDirectory() {
 	usr, err := user.Current()
 	if err != nil {
-		OutputDir = filepath.Join(".sys-cli", "out")
+		OutputDir = filepath.Join(".systat", "out")
 	} else {
-		OutputDir = filepath.Join(usr.HomeDir, ".sys-cli", "out")
+		OutputDir = filepath.Join(usr.HomeDir, ".systat", "out")
 	}
 }
 

@@ -2,24 +2,24 @@ package cmd
 
 import (
 	"os"
-	"sys-cli/internal/cmd/amx"
-	"sys-cli/internal/cmd/cpu"
-	"sys-cli/internal/cmd/mem"
-	"sys-cli/pkg"
+	"systat/internal/cmd/amx"
+	"systat/internal/cmd/cpu"
+	"systat/internal/cmd/mem"
+	"systat/pkg"
 
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "sys-cli",
+	Use:   "systat",
 	Short: "Sys CLI for cpu,mem,amx utilization",
 	Long: `Sys CLI for cpu,mem,amx utilization
 
 Examples:	
-sys-cli cpu - for cpu utlization
-sys-cli mem - for mem utilization
-sys-cli amx - for amx utilization
+systat cpu - for cpu utlization
+systat mem - for mem utilization
+systat amx - for amx utilization
 `,
 }
 
@@ -35,7 +35,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.sys-cli/config.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.systat/config.yaml)")
 
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.AddCommand(VersionCmd)
